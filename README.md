@@ -5,7 +5,7 @@ This is a port of Gabriele Cirulli's 2048 game to Android, all credit for game d
 
 
 
-{MIT License}(https://github.com/gabrielecirulli/2048/blob/master/LICENSE.txt)
+[MIT License](https://github.com/gabrielecirulli/2048/blob/master/LICENSE.txt)
 
 ## Contributing
 This is an open source project and all sugguestions and PRs are welcome.
