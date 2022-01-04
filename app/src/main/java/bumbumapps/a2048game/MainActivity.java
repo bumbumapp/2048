@@ -1,4 +1,4 @@
-package aarkay.a2048game;
+package bumbumapps.a2048game;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;

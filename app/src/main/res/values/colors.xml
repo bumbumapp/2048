@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <color name="textColorDark">#f6f6f6</color>
-    <color name="textColorLight">#f6f6f6</color>
-    <color name="textColor">#f3e5f5</color>
-    <color name="textDark">#000</color>
-
+    <color name="textColorDark">#ffffff</color>
+    <color name="textColorLight">#ffffff</color>
+    <color name="textColor">#FFFFFF</color>
+    <color name="textDark">#FFFFFF</color>
     <color name="lightUpRectangle">#cf3721</color>
-    <color name="cellRectangle">#f1f3ce</color>
-    <color name="backgroundRectangle">#de7a22</color>
-
-    <color name="toolbar">#de7a22</color>
-    <color name="background">#f4cc70</color>
-
-    <color name="cellColor2">#7f8c8d</color>
-    <color name="cellColor4">#D84315</color>
-    <color name="cellColor8">#FFB300</color>
-    <color name="cellColor16">#673AB7</color>
-    <color name="cellColor32">#C51162</color>
-    <color name="cellColor64">#9E9D24</color>
-    <color name="cellColor128">#7CB342</color>
-    <color name="cellColor256">#43A047</color>
-    <color name="cellColor512">#4DB6AC</color>
-    <color name="cellColor1024">#00695C</color>
+    <color name="cellRectangle">#221F35</color>
+    <color name="backgroundRectangle">#373553</color>
+    <color name="toolbar">#221F35</color>
+    <color name="background">#221F35</color>
+    <color name="cellColor2">#A1AC35</color>
+    <color name="cellColor4">#CDC04F</color>
+    <color name="cellColor8">#FFC107</color>
+    <color name="cellColor16">#C88C33</color>
+    <color name="cellColor32">#FF9800</color>
+    <color name="cellColor64">#F44336</color>
+    <color name="cellColor128">#E91E63</color>
+    <color name="cellColor256">#9C27B0</color>
+    <color name="cellColor512">#3F51B5</color>
+    <color name="cellColor1024">#2196F3</color>
     <color name="cellColor2048">#AA00FF</color>
     <color name="cellColor4096">#880E4F</color>
-    <color name="fadeRectangle">#d6cdc4</color>
-
+    <color name="fadeRectangle">#80000000</color>
 </resources>

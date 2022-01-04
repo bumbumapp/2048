@@ -1,4 +1,4 @@
-package aarkay.a2048game;
+package bumbumapps.a2048game;
 
 import android.content.Context;
 import android.content.SharedPreferences;

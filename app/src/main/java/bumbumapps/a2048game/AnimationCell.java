@@ -1,4 +1,4 @@
-package aarkay.a2048game;
+package bumbumapps.a2048game;
 
 class AnimationCell extends Cell {
     public final int[] extras;

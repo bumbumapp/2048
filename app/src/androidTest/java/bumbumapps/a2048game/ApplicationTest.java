@@ -1,4 +1,4 @@
-package aarkay.a2048game;
+package bumbumapps.a2048game;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
