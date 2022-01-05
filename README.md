@@ -10,7 +10,7 @@ This is a port of [Gabriele Cirulli's 2048 game](https://github.com/gabrieleciru
 ## Contributing
 This is an open source project and all sugguestions and PRs are welcome.
 
-##Thanks
+## Thanks
 
 MIT License
 
