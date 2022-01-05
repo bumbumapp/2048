@@ -12,7 +12,7 @@ This is an open source project and all sugguestions and PRs are welcome.
 
 ## Thanks
 
-MIT License
+[MIT License](https://github.com/gabrielecirulli/2048/blob/master/LICENSE.txt)
 
 Copyright (c) 2013 Gabriele Cirulli
 
