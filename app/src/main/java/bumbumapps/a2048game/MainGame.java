@@ -1,12 +1,21 @@
 package bumbumapps.a2048game;
 
+import static com.google.android.gms.internal.zzir.runOnUiThread;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainGame {
 
@@ -46,15 +55,19 @@ public class MainGame {
     public long highScore = 0;
     public long lastScore = 0;
     private long bufferScore = 0;
+    private InterstitialAd mInterstitialAd;
+    final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     boolean paused = false;
 
     public MainGame(Context context, MainView view) {
         mContext = context;
         mView = view;
         endingMaxValue = (int) Math.pow(2, view.numCellTypes - 1);
+        scheduleInterstitial();
     }
 
     public void newGame() {
+
         if (grid == null) {
             grid = new Grid(numSquaresX, numSquaresY);
         } else {
@@ -160,16 +173,22 @@ public class MainGame {
     }
 
     public void revertUndoState() {
-        if (canUndo) {
-            MainActivity.running = true;
-            canUndo = false;
-            aGrid.cancelAnimations();
-            grid.revertTiles();
-            score = lastScore;
-            gameState = lastGameState;
-            mView.refreshLastTime = true;
-            mView.invalidate();
+        if (mInterstitialAd!=null){
+            mInterstitialAd.show();
         }
+
+            if (canUndo) {
+                MainActivity.running = true;
+                canUndo = false;
+                aGrid.cancelAnimations();
+                grid.revertTiles();
+                score = lastScore;
+                gameState = lastGameState;
+                mView.refreshLastTime = true;
+                mView.invalidate();
+            }
+
+
     }
 
     public boolean gameWon() {
@@ -264,18 +283,48 @@ public class MainGame {
             endGame();
         }
     }
+//ads
+private void setUpInterstitialAd() {
+    mInterstitialAd = new InterstitialAd(mContext.getApplicationContext());
+    mInterstitialAd.setAdUnitId("ca-app-pub-8444865753152507/1098318507");
+    mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
+}
+    private void scheduleInterstitial() {
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        setUpInterstitialAd();
+                    }
+                });
+
+            }
+        }, 1, 4, TimeUnit.MINUTES);
+
+    }
     private void endGame() {
-        MainActivity.running = false;
-        aGrid.startAnimation(-1, -1, FADE_GLOBAL_ANIMATION, NOTIFICATION_ANIMATION_TIME, NOTIFICATION_DELAY_TIME, null);
-        if (score >= highScore) {
-            highScore = score;
-            recordHighScore();
+        if (mInterstitialAd!=null){
+            mInterstitialAd.show();
         }
-        if (maxTile >= getMaxTile()) {
-            recordMaxTile();
-            maxTile = getMaxTile();
-        }
+
+            MainActivity.running = false;
+            aGrid.startAnimation(-1, -1, FADE_GLOBAL_ANIMATION, NOTIFICATION_ANIMATION_TIME, NOTIFICATION_DELAY_TIME, null);
+            if (score >= highScore) {
+                highScore = score;
+                recordHighScore();
+            }
+            if (maxTile >= getMaxTile()) {
+                recordMaxTile();
+                maxTile = getMaxTile();
+            }
+
+
+
     }
 
     private Cell getVector(int direction) {
@@ -378,13 +427,19 @@ public class MainGame {
     }
 
     public void pausePlay() {
-        if (!paused && mView.game.isActive()) {
-            MainActivity.running = false;
-            paused = true;
-        } else {
-            paused = false;
-            MainActivity.running = true;
+        if (mInterstitialAd!=null){
+            mInterstitialAd.show();
         }
-        mView.invalidate();
+            if (!paused && mView.game.isActive()) {
+                MainActivity.running = false;
+                paused = true;
+            } else {
+                paused = false;
+                MainActivity.running = true;
+            }
+            mView.invalidate();
+
+
+
     }
 }

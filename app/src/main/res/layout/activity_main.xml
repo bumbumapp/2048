@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context=".MainActivity"
+    >
 
     <bumbumapps.a2048game.MainView
         android:layout_width="wrap_content"
@@ -12,12 +15,14 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="1" />
 
-    <include
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adview"
+        android:layout_gravity="bottom|center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/bottom_bar"
-        android:id="@+id/bottom_bar"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1" />
+        ads:adSize="FULL_BANNER"
+        ads:adUnitId="ca-app-pub-8444865753152507/8998674033">
+    </com.google.android.gms.ads.AdView>
 
 </LinearLayout>

@@ -27,7 +27,7 @@ public class SplitToolbar extends Toolbar {
     @Override
     public void addView(View child, ViewGroup.LayoutParams params) {
         if (child instanceof ActionMenuView) {
-            params.width = LayoutParams.MATCH_PARENT;
+            params.width = LayoutParams.WRAP_CONTENT;
         }
         super.addView(child, params);
     }

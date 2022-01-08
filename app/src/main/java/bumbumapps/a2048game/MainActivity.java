@@ -1,17 +1,22 @@
 package bumbumapps.a2048game;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
+
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.widget.Toast;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,42 +31,31 @@ public class MainActivity extends AppCompatActivity {
     private static final String UNDO_GAME_STATE = "undo game state";
     private static final String MAX_TILE = "max tile";
     private static final String TIMER = "timer";
+    private AdView adView;
+
 
     private MainView view;
     Thread t;
     volatile public static boolean running = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         view = (MainView) findViewById(R.id.view);
+        adView=(AdView)findViewById(R.id.adview);
 
-        // Bottom Toolbar
-        Toolbar bottomBar = (Toolbar) findViewById(R.id.bottom_bar);
-        bottomBar.inflateMenu(R.menu.bottom_menu);
-        bottomBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.first:
-                        Toast.makeText(MainActivity.this, "Rate this app :)", Toast.LENGTH_SHORT).show();
-                        rateApp();
-                        break;
-                    case R.id.second:
-                        Toast.makeText(MainActivity.this, "More apps by us :)", Toast.LENGTH_SHORT).show();
-                        openUrl("https://play.google.com/store/apps/developer?id=AarKay");
-                        break;
-                }
-                return onOptionsItemSelected(item);
-            }
-        });
+        MobileAds.initialize(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
 
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         view.hasSaveState = settings.getBoolean("save_state", false);
 
         if (savedInstanceState != null) {
+
             if (savedInstanceState.getBoolean("hasState")) {
                 load();
             }
@@ -80,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 if (running) {
                                     view.setElTime();
+
                                 }
                             }
                         });
@@ -117,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean("hasState", true);
         save();
+
+
     }
 
     @Override
@@ -175,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void load() {
         //Stopping all animations
+
         view.game.aGrid.cancelAnimations();
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -204,47 +202,15 @@ public class MainActivity extends AppCompatActivity {
         view.game.lastGameState = settings.getInt(UNDO_GAME_STATE, view.game.lastGameState);
         view.game.maxTile = settings.getLong(MAX_TILE, view.game.maxTile);
         view.elTime = settings.getInt(TIMER, view.elTime);
+
     }
 
-//    void hideTheBars() {
-//        if (Build.VERSION.SDK_INT < 16) { //ye olde method
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        } else { // Jellybean and up, new hotness
-//            View decorView = getWindow().getDecorView();
-//            // Hide the status bar.
-//            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//            decorView.setSystemUiVisibility(uiOptions);
-//        }
-//    }
 
-    public void rateApp() {
-        try {
-            Intent rateIntent = rateIntentForUrl("market://details");
-            startActivity(rateIntent);
-        } catch (ActivityNotFoundException e) {
-            Intent rateIntent = rateIntentForUrl("https://play.google.com/store/apps/details");
-            startActivity(rateIntent);
-        }
-    }
 
-    private Intent rateIntentForUrl(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("%s?id=%s", url, getPackageName())));
-        int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
-        if (Build.VERSION.SDK_INT >= 21) {
-            flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
-        } else {
-            //noinspection deprecation
-            flags |= Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET;
-        }
-        intent.addFlags(flags);
-        return intent;
-    }
 
-    private void openUrl(String url) {
-        Uri uri = Uri.parse(url); // missing 'http://' will cause crashed
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
-    }
+
+
+
+
 
 }
