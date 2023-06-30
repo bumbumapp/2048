@@ -1,11 +1,12 @@
 package bumbumapps.a2048game;
 
 import android.content.Context;
-import android.support.v7.widget.ActionMenuView;
-import android.support.v7.widget.Toolbar;
+
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ActionMenuView;
+import android.widget.Toolbar;
 
 /**
  * Created by AarKay

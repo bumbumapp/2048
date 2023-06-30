@@ -1,14 +1,22 @@
 package bumbumapps.a2048game;
 
-import static com.google.android.gms.internal.zzir.runOnUiThread;
 
+import static bumbumapps.a2048game.Globals.TIMER_FINISHED;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
-import com.google.android.gms.ads.AdListener;
+
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,7 +71,6 @@ public class MainGame {
         mContext = context;
         mView = view;
         endingMaxValue = (int) Math.pow(2, view.numCellTypes - 1);
-        scheduleInterstitial();
     }
 
     public void newGame() {
@@ -96,6 +103,8 @@ public class MainGame {
         mView.refreshLastTime = true;
         mView.resyncTime();
         mView.invalidate();
+
+        setUpInterstitialAd();
     }
 
     private void addStartTiles() {
@@ -174,19 +183,19 @@ public class MainGame {
 
     public void revertUndoState() {
         if (mInterstitialAd!=null){
-            mInterstitialAd.show();
+            mInterstitialAd.show((Activity) mContext);
         }
 
-            if (canUndo) {
-                MainActivity.running = true;
-                canUndo = false;
-                aGrid.cancelAnimations();
-                grid.revertTiles();
-                score = lastScore;
-                gameState = lastGameState;
-                mView.refreshLastTime = true;
-                mView.invalidate();
-            }
+        if (canUndo) {
+            MainActivity.running = true;
+            canUndo = false;
+            aGrid.cancelAnimations();
+            grid.revertTiles();
+            score = lastScore;
+            gameState = lastGameState;
+            mView.refreshLastTime = true;
+            mView.invalidate();
+        }
 
 
     }
@@ -283,45 +292,44 @@ public class MainGame {
             endGame();
         }
     }
-//ads
-private void setUpInterstitialAd() {
-    mInterstitialAd = new InterstitialAd(mContext.getApplicationContext());
-    mInterstitialAd.setAdUnitId("ca-app-pub-8444865753152507/1098318507");
-    mInterstitialAd.loadAd(new AdRequest.Builder().build());
+    //ads
+    private void setUpInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
 
-}
-    private void scheduleInterstitial() {
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-
-                runOnUiThread(new Runnable() {
+        InterstitialAd.load(mContext,mContext.getString(R.string.interstial_id), adRequest,
+                new InterstitialAdLoadCallback() {
                     @Override
-                    public void run() {
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mInterstitialAd = interstitialAd;
+                    }
 
-                        setUpInterstitialAd();
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+                        mInterstitialAd = null;
                     }
                 });
 
-            }
-        }, 1, 4, TimeUnit.MINUTES);
 
     }
+
     private void endGame() {
         if (mInterstitialAd!=null){
-            mInterstitialAd.show();
+            mInterstitialAd.show((Activity) mContext);
         }
 
-            MainActivity.running = false;
-            aGrid.startAnimation(-1, -1, FADE_GLOBAL_ANIMATION, NOTIFICATION_ANIMATION_TIME, NOTIFICATION_DELAY_TIME, null);
-            if (score >= highScore) {
-                highScore = score;
-                recordHighScore();
-            }
-            if (maxTile >= getMaxTile()) {
-                recordMaxTile();
-                maxTile = getMaxTile();
-            }
+        MainActivity.running = false;
+        aGrid.startAnimation(-1, -1, FADE_GLOBAL_ANIMATION, NOTIFICATION_ANIMATION_TIME, NOTIFICATION_DELAY_TIME, null);
+        if (score >= highScore) {
+            highScore = score;
+            recordHighScore();
+        }
+        if (maxTile >= getMaxTile()) {
+            recordMaxTile();
+            maxTile = getMaxTile();
+        }
 
 
 
@@ -427,19 +435,33 @@ private void setUpInterstitialAd() {
     }
 
     public void pausePlay() {
-        if (mInterstitialAd!=null){
-            mInterstitialAd.show();
-        }
-            if (!paused && mView.game.isActive()) {
-                MainActivity.running = false;
-                paused = true;
-            } else {
-                paused = false;
-                MainActivity.running = true;
+        if (TIMER_FINISHED){
+            if (mInterstitialAd!=null){
+                mInterstitialAd.show((Activity) mContext);
+                stopAds();
             }
-            mView.invalidate();
+        }
+        if (!paused && mView.game.isActive()) {
+            MainActivity.running = false;
+            paused = true;
+        } else {
+            paused = false;
+            MainActivity.running = true;
+        }
+        mView.invalidate();
 
 
 
+    }
+    private void stopAds() {
+        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+            @Override
+            public void onAdDismissedFullScreenContent() {
+                Timers.timer().start();
+                mInterstitialAd=null;
+                TIMER_FINISHED=false;
+                setUpInterstitialAd();
+            }
+        });
     }
 }

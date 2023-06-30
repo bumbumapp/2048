@@ -119,6 +119,7 @@ public class MainView extends View {
         }
         setOnTouchListener(new InputListener(this));
         game.newGame();
+
     }
 
     private static int log2(int n) {
