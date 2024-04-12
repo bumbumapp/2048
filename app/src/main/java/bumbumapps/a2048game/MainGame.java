@@ -184,6 +184,7 @@ public class MainGame {
     public void revertUndoState() {
         if (mInterstitialAd!=null){
             mInterstitialAd.show((Activity) mContext);
+            stopAds();
         }
 
         if (canUndo) {
@@ -318,6 +319,7 @@ public class MainGame {
     private void endGame() {
         if (mInterstitialAd!=null){
             mInterstitialAd.show((Activity) mContext);
+            stopAds();
         }
 
         MainActivity.running = false;

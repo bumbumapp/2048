@@ -3,14 +3,14 @@ apply plugin:  'com.google.gms.google-services'
 apply plugin:  'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.bumbumapps.a2048game"
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 11
-        versionName "10.2.1"
+        targetSdkVersion 33
+        versionCode 13
+        versionName "10.2.3"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8.toString()
