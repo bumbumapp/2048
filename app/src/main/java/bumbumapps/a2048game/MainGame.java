@@ -1,7 +1,6 @@
 package bumbumapps.a2048game;
 
 
-import static bumbumapps.a2048game.Globals.TIMER_FINISHED;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,11 +11,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,7 +57,6 @@ public class MainGame {
     public long highScore = 0;
     public long lastScore = 0;
     private long bufferScore = 0;
-    private InterstitialAd mInterstitialAd;
     final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     boolean paused = false;
 
@@ -182,10 +175,6 @@ public class MainGame {
     }
 
     public void revertUndoState() {
-        if (mInterstitialAd!=null){
-            mInterstitialAd.show((Activity) mContext);
-            stopAds();
-        }
 
         if (canUndo) {
             MainActivity.running = true;
@@ -295,32 +284,18 @@ public class MainGame {
     }
     //ads
     private void setUpInterstitialAd() {
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdsHelper.preloadInterstitial(mContext, mContext.getString(R.string.interstial_id));
+    }
 
-        InterstitialAd.load(mContext,mContext.getString(R.string.interstial_id), adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        mInterstitialAd = interstitialAd;
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-                        mInterstitialAd = null;
-                    }
-                });
-
-
+    /** Natural break point: shows the preloaded interstitial if the frequency cap allows it. */
+    private void showInterstitialAtBreak() {
+        if (mContext instanceof Activity) {
+            AdsHelper.showInterstitialIfReady((Activity) mContext, mContext.getString(R.string.interstial_id));
+        }
     }
 
     private void endGame() {
-        if (mInterstitialAd!=null){
-            mInterstitialAd.show((Activity) mContext);
-            stopAds();
-        }
+        showInterstitialAtBreak();
 
         MainActivity.running = false;
         aGrid.startAnimation(-1, -1, FADE_GLOBAL_ANIMATION, NOTIFICATION_ANIMATION_TIME, NOTIFICATION_DELAY_TIME, null);
@@ -437,12 +412,6 @@ public class MainGame {
     }
 
     public void pausePlay() {
-        if (TIMER_FINISHED){
-            if (mInterstitialAd!=null){
-                mInterstitialAd.show((Activity) mContext);
-                stopAds();
-            }
-        }
         if (!paused && mView.game.isActive()) {
             MainActivity.running = false;
             paused = true;
@@ -454,16 +423,5 @@ public class MainGame {
 
 
 
-    }
-    private void stopAds() {
-        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-            @Override
-            public void onAdDismissedFullScreenContent() {
-                Timers.timer().start();
-                mInterstitialAd=null;
-                TIMER_FINISHED=false;
-                setUpInterstitialAd();
-            }
-        });
     }
 }
