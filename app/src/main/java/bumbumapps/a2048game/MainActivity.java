@@ -9,9 +9,7 @@ import android.view.KeyEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 
@@ -40,12 +38,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EdgeToEdgeInsets.apply(this);
         view = (MainView) findViewById(R.id.view);
-        adView=(AdView)findViewById(R.id.adview);
-
-        MobileAds.initialize(this);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        final android.view.ViewGroup adContainer = findViewById(R.id.ad_container);
+        AdsHelper.gatherConsent(this, () -> {
+            adView = AdsHelper.loadBanner(this, adContainer, getString(R.string.app_banner));
+            AdsHelper.preloadInterstitial(this, getString(R.string.interstial_id));
+            updatePrivacyButton();
+        });
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
 
@@ -83,6 +83,16 @@ public class MainActivity extends AppCompatActivity {
         };
         t.start();
 
+    }
+
+    private void updatePrivacyButton() {
+        android.view.View privacy = findViewById(R.id.privacy_options);
+        if (AdsHelper.isPrivacyOptionsRequired(this)) {
+            privacy.setVisibility(android.view.View.VISIBLE);
+            privacy.setOnClickListener(v -> AdsHelper.showPrivacyOptions(this));
+        } else {
+            privacy.setVisibility(android.view.View.GONE);
+        }
     }
 
     @Override
@@ -169,6 +179,26 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
+    /**
+     * Restores a tile from its saved value: &gt;0 creates a tile, 0 means empty, -1 (missing) keeps the current tile.
+     */
+    static Tile restoreTile(int x, int y, int savedValue, Tile current) {
+        if (savedValue > 0) {
+            return new Tile(x, y, savedValue);
+        } else if (savedValue == 0) {
+            return null;
+        }
+        return current;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (t != null) {
+            t.interrupt();
+        }
+        super.onDestroy();
+    }
+
     private void load() {
         //Stopping all animations
 
@@ -178,18 +208,10 @@ public class MainActivity extends AppCompatActivity {
         for (int xx = 0; xx < view.game.grid.field.length; xx++) {
             for (int yy = 0; yy < view.game.grid.field[0].length; yy++) {
                 int value = settings.getInt(xx + " " + yy, -1);
-                if (value > 0) {
-                    view.game.grid.field[xx][yy] = new Tile(xx, yy, value);
-                } else if (value == 0) {
-                    view.game.grid.field[xx][yy] = null;
-                }
+                view.game.grid.field[xx][yy] = restoreTile(xx, yy, value, view.game.grid.field[xx][yy]);
 
                 int undoValue = settings.getInt(UNDO_GRID + xx + " " + yy, -1);
-                if (undoValue > 0) {
-                    view.game.grid.undoField[xx][yy] = new Tile(xx, yy, undoValue);
-                } else if (value == 0) {
-                    view.game.grid.undoField[xx][yy] = null;
-                }
+                view.game.grid.undoField[xx][yy] = restoreTile(xx, yy, undoValue, view.game.grid.undoField[xx][yy]);
             }
         }
 
