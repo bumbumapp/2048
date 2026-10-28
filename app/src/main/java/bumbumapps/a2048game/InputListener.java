@@ -146,8 +146,8 @@ class InputListener implements View.OnTouchListener {
                         mView.game.revertUndoState();
                     } else if (iconPressed(mView.sXPause, mView.sYIcons)) {
                         mView.game.pausePlay();
-                    } else if (isTap(2) && inRange(mView.startingX, x, mView.endingX)
-                            && inRange(mView.startingY, x, mView.endingY) && mView.continueButtonEnabled) {
+                    } else if (isTap(2) && tapOnBoard(x, y, mView.startingX, mView.endingX, mView.startingY, mView.endingY)
+                            && mView.continueButtonEnabled) {
                         mView.game.setEndlessMode();
                     }
                 }
@@ -162,6 +162,11 @@ class InputListener implements View.OnTouchListener {
     private boolean iconPressed(int sx, int sy) {
         return isTap(1) && inRange(sx, x, sx + mView.iconSize)
                 && inRange(sy, y, sy + mView.iconSize);
+    }
+
+    /** "Tap to continue" after a win: the tap has to land on the board (the Y check used x before). */
+    static boolean tapOnBoard(float x, float y, float startX, float endX, float startY, float endY) {
+        return startX <= x && x <= endX && startY <= y && y <= endY;
     }
 
     private boolean inRange(float starting, float check, float ending) {
