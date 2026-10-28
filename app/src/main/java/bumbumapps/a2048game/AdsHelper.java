@@ -2,7 +2,7 @@ package bumbumapps.a2048game;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.SystemClock;
+import android.content.SharedPreferences;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 
@@ -29,13 +29,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class AdsHelper {
 
-    /** Minimum time between two interstitials (and between app start and the first one). */
-    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 60_000L;
+    /**
+     * Minimum time between two interstitials, and between the first launch and the first one. Stored in
+     * SharedPreferences so the cap survives restarts: at most one an hour, none in the first hour.
+     */
+    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 60 * 60_000L;
+    private static final String CAP_PREFS = "interstitial_cap";
+    private static final String KEY_LAST = "last_shown_ms";
+    private static final String KEY_FIRST_SEEN = "first_seen_ms";
 
     private static final AtomicBoolean mobileAdsStarted = new AtomicBoolean(false);
     private static InterstitialAd interstitialAd;
     private static boolean interstitialLoading;
-    private static long lastInterstitialAt = -1L;
 
     public interface OnAdsReady {
         void onAdsReady();
@@ -49,9 +54,7 @@ public final class AdsHelper {
      * at most once, and only when ads may be requested.
      */
     public static void gatherConsent(@NonNull Activity activity, @NonNull OnAdsReady onReady) {
-        if (lastInterstitialAt < 0) {
-            lastInterstitialAt = SystemClock.elapsedRealtime();
-        }
+        firstSeen(capPrefs(activity), System.currentTimeMillis());
         final AtomicBoolean delivered = new AtomicBoolean(false);
         final ConsentInformation info = UserMessagingPlatform.getConsentInformation(activity);
         ConsentRequestParameters params = new ConsentRequestParameters.Builder().build();
@@ -137,12 +140,14 @@ public final class AdsHelper {
      * Returns true if an ad is being shown.
      */
     public static boolean showInterstitialIfReady(@NonNull Activity activity, @NonNull String adUnitId) {
-        long now = SystemClock.elapsedRealtime();
+        long now = System.currentTimeMillis();
         if (interstitialAd == null) {
             preloadInterstitial(activity, adUnitId);
             return false;
         }
-        if (!isIntervalElapsed(lastInterstitialAt, now, INTERSTITIAL_MIN_INTERVAL_MS) || activity.isFinishing()) {
+        SharedPreferences prefs = capPrefs(activity);
+        long since = Math.max(prefs.getLong(KEY_LAST, -1L), firstSeen(prefs, now));
+        if (!isIntervalElapsed(since, now, INTERSTITIAL_MIN_INTERVAL_MS) || activity.isFinishing()) {
             return false;
         }
         final Context app = activity.getApplicationContext();
@@ -159,9 +164,22 @@ public final class AdsHelper {
                 preloadInterstitial(app, adUnitId);
             }
         });
-        lastInterstitialAt = now;
+        prefs.edit().putLong(KEY_LAST, now).apply();
         ad.show(activity);
         return true;
+    }
+
+    private static SharedPreferences capPrefs(Context context) {
+        return context.getApplicationContext().getSharedPreferences(CAP_PREFS, Context.MODE_PRIVATE);
+    }
+
+    private static long firstSeen(SharedPreferences prefs, long now) {
+        long first = prefs.getLong(KEY_FIRST_SEEN, 0L);
+        if (first == 0L) {
+            first = now;
+            prefs.edit().putLong(KEY_FIRST_SEEN, first).apply();
+        }
+        return first;
     }
 
     /** Frequency cap: true when at least {@code minIntervalMs} passed since {@code lastAt} (negative = never). */

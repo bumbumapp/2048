@@ -8,12 +8,12 @@ import org.junit.Test;
 public class AdsHelperTest {
     @Test
     public void interstitialCapBlocksWithinInterval() {
-        assertFalse(AdsHelper.isIntervalElapsed(1_000L, 30_000L, AdsHelper.INTERSTITIAL_MIN_INTERVAL_MS));
+        assertFalse(AdsHelper.isIntervalElapsed(1_000L, 1_000L + 59 * 60_000L, AdsHelper.INTERSTITIAL_MIN_INTERVAL_MS));
     }
 
     @Test
     public void interstitialCapAllowsAfterInterval() {
-        assertTrue(AdsHelper.isIntervalElapsed(1_000L, 61_000L, AdsHelper.INTERSTITIAL_MIN_INTERVAL_MS));
+        assertTrue(AdsHelper.isIntervalElapsed(1_000L, 1_000L + 60 * 60_000L, AdsHelper.INTERSTITIAL_MIN_INTERVAL_MS));
     }
 
     @Test
