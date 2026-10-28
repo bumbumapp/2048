@@ -30,10 +30,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class AdsHelper {
 
     /**
-     * Minimum time between two interstitials, and between the first launch and the first one. Stored in
-     * SharedPreferences so the cap survives restarts: at most one an hour, none in the first hour.
+     * Interstitials only at game over, never mid-game. Stored in SharedPreferences so the cap survives
+     * restarts: at most one per 3 minutes, none in the first 3 minutes after install.
      */
-    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 60 * 60_000L;
+    public static final long INTERSTITIAL_MIN_INTERVAL_MS = 3 * 60_000L;
+    public static final long INTERSTITIAL_FIRST_GRACE_MS = 3 * 60_000L;
     private static final String CAP_PREFS = "interstitial_cap";
     private static final String KEY_LAST = "last_shown_ms";
     private static final String KEY_FIRST_SEEN = "first_seen_ms";
@@ -146,8 +147,9 @@ public final class AdsHelper {
             return false;
         }
         SharedPreferences prefs = capPrefs(activity);
-        long since = Math.max(prefs.getLong(KEY_LAST, -1L), firstSeen(prefs, now));
-        if (!isIntervalElapsed(since, now, INTERSTITIAL_MIN_INTERVAL_MS) || activity.isFinishing()) {
+        if (!isIntervalElapsed(firstSeen(prefs, now), now, INTERSTITIAL_FIRST_GRACE_MS)
+                || !isIntervalElapsed(prefs.getLong(KEY_LAST, -1L), now, INTERSTITIAL_MIN_INTERVAL_MS)
+                || activity.isFinishing()) {
             return false;
         }
         final Context app = activity.getApplicationContext();
