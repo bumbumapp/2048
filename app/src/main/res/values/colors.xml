@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 2026 premium refresh: graphite board, one curated tile spectrum readable with white numbers. -->
+    <!-- Bento: light ground, white board and score tiles, curated tile spectrum with white numbers. -->
     <color name="textColorDark">#ffffff</color>
     <color name="textColorLight">#ffffff</color>
-    <color name="textColor">#FFFFFF</color>
-    <color name="textDark">#FFFFFF</color>
+    <color name="textColor">#5B6275</color>
+    <color name="textDark">#0E1222</color>
     <color name="lightUpRectangle">#F5B83D</color>
-    <color name="cellRectangle">#23262D</color>
-    <color name="backgroundRectangle">#1A1C21</color>
-    <color name="toolbar">#121317</color>
-    <color name="background">#121317</color>
+    <color name="cellRectangle">#ECEDF3</color>
+    <color name="backgroundRectangle">#FFFFFF</color>
+    <color name="toolbar">#F3F4F8</color>
+    <color name="background">#F3F4F8</color>
     <color name="cellColor2">#5B6B8C</color>
     <color name="cellColor4">#4E7FA8</color>
     <color name="cellColor8">#2E9C8A</color>
@@ -22,5 +22,7 @@
     <color name="cellColor1024">#6366F1</color>
     <color name="cellColor2048">#F5B83D</color>
     <color name="cellColor4096">#FF6B70</color>
-    <color name="fadeRectangle">#80000000</color>
+    <color name="fadeRectangle">#CCF3F4F8</color>
+    <color name="textValue">#0E1222</color>
+    <color name="iconColor">#0E1222</color>
 </resources>

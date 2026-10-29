@@ -90,7 +90,7 @@ public class MainView extends View {
             lightUpRectangle = resources.getDrawable(R.drawable.light_up_rectangle);
             fadeRectangle = resources.getDrawable(R.drawable.fade_rectangle);
             this.setBackgroundColor(resources.getColor(R.color.background));
-            Typeface font = Typeface.createFromAsset(resources.getAssets(), "ClearSans-Bold.ttf");
+            Typeface font = Typeface.createFromAsset(resources.getAssets(), "PlusJakartaSans-ExtraBold.ttf");
             paint.setTypeface(font);
             paint.setAntiAlias(true);
         } catch (Exception e) {
@@ -111,7 +111,7 @@ public class MainView extends View {
             lightUpRectangle = resources.getDrawable(R.drawable.light_up_rectangle);
             fadeRectangle = resources.getDrawable(R.drawable.fade_rectangle);
             this.setBackgroundColor(resources.getColor(R.color.background));
-            Typeface font = Typeface.createFromAsset(resources.getAssets(), "ClearSans-Bold.ttf");
+            Typeface font = Typeface.createFromAsset(resources.getAssets(), "PlusJakartaSans-ExtraBold.ttf");
             paint.setTypeface(font);
             paint.setAntiAlias(true);
         } catch (Exception e) {
@@ -232,7 +232,7 @@ public class MainView extends View {
         paint.setColor(getResources().getColor(R.color.textColor));
         canvas.drawText(getResources().getString(R.string.high_score), sXHighScore + textMiddleHighScore, titleStartYAll, paint);
         paint.setTextSize(bodyTextSize);
-        paint.setColor(getResources().getColor(R.color.textColorLight));
+        paint.setColor(getResources().getColor(R.color.textValue));
         canvas.drawText(String.valueOf(game.highScore), sXHighScore + textMiddleHighScore, bodyStartYAll, paint);
 
         //Outputting scores box
@@ -242,7 +242,7 @@ public class MainView extends View {
         paint.setColor(getResources().getColor(R.color.textColor));
         canvas.drawText(getResources().getString(R.string.score), sXScore + textMiddleScore, titleStartYAll, paint);
         paint.setTextSize(bodyTextSize);
-        paint.setColor(getResources().getColor(R.color.textColorLight));
+        paint.setColor(getResources().getColor(R.color.textValue));
         canvas.drawText(String.valueOf(game.score), sXScore + textMiddleScore, bodyStartYAll, paint);
 
         //Outputting max tile box
@@ -252,7 +252,7 @@ public class MainView extends View {
         paint.setColor(getResources().getColor(R.color.textColor));
         canvas.drawText(getResources().getString(R.string.maxtile), sXMaxTile + textMiddleMaxTile, titleStartYAll, paint);
         paint.setTextSize(bodyTextSize);
-        paint.setColor(getResources().getColor(R.color.textColorLight));
+        paint.setColor(getResources().getColor(R.color.textValue));
         canvas.drawText(String.valueOf(game.maxTile), sXMaxTile + textMiddleMaxTile, bodyStartYAll, paint);
 
         //Outputting elapsed time
@@ -262,7 +262,7 @@ public class MainView extends View {
         paint.setColor(getResources().getColor(R.color.textColor));
         canvas.drawText(getResources().getString(R.string.timeText), sXTime + textMiddleTime, titleStartYAll, paint);
         paint.setTextSize(bodyTextSize);
-        paint.setColor(getResources().getColor(R.color.textColorLight));
+        paint.setColor(getResources().getColor(R.color.textValue));
         canvas.drawText(timeConversion(elTime), sXTime + textMiddleTime, bodyStartYAll, paint);
 
     }
@@ -288,7 +288,7 @@ public class MainView extends View {
         }
 
         drawDrawable(canvas,
-                getResources().getDrawable(R.drawable.ic_refresh_white_48dp),
+                icon(R.drawable.ic_refresh_white_48dp),
                 sXNewGame + iconPaddingSize,
                 sYIcons + iconPaddingSize,
                 sXNewGame + iconSize - iconPaddingSize,
@@ -296,6 +296,13 @@ public class MainView extends View {
         );
     }
 
+
+    /** Toolbar icons are white PNGs; tint them for the light Bento surface. */
+    private android.graphics.drawable.Drawable icon(int res) {
+        android.graphics.drawable.Drawable d = getResources().getDrawable(res).mutate();
+        d.setTint(getResources().getColor(R.color.iconColor));
+        return d;
+    }
 
     private void drawUndoButton(Canvas canvas, boolean lightUp) {
         if (lightUp) {
@@ -314,7 +321,7 @@ public class MainView extends View {
             );
         }
         drawDrawable(canvas,
-                getResources().getDrawable(R.drawable.ic_undo_white_48dp),
+                icon(R.drawable.ic_undo_white_48dp),
                 sXUndo + iconPaddingSize,
                 sYIcons + iconPaddingSize,
                 sXUndo + iconSize - iconPaddingSize,
@@ -332,7 +339,7 @@ public class MainView extends View {
                     sYIcons + iconSize
             );
             drawDrawable(canvas,
-                    getResources().getDrawable(R.drawable.ic_play_arrow_white_48dp),
+                    icon(R.drawable.ic_play_arrow_white_48dp),
                     sXPause + iconPaddingSize,
                     sYIcons + iconPaddingSize,
                     sXPause + iconSize - iconPaddingSize,
@@ -346,7 +353,7 @@ public class MainView extends View {
                     sYIcons + iconSize
             );
             drawDrawable(canvas,
-                    getResources().getDrawable(R.drawable.ic_pause),
+                    icon(R.drawable.ic_pause),
                     sXPause + iconPaddingSize,
                     sYIcons + iconPaddingSize,
                     sXPause + iconSize - iconPaddingSize,
