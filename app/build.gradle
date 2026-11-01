@@ -10,8 +10,8 @@ if (adsPropsFile.exists()) adsPropsFile.withInputStream { adsProps.load(it) }
 def adId = { String key, String fallback -> ((project.findProperty(key) ?: adsProps.getProperty(key)) ?: fallback).toString() }
 def HMS_TEST_BANNER_ID = 'testw6vs28auh3'
 def HMS_TEST_INTERSTITIAL_ID = 'testb4znbuh3n2'
-def HMS_BANNER_ID = adId('HMS_BANNER_ID', HMS_TEST_BANNER_ID)
-def HMS_INTERSTITIAL_ID = adId('HMS_INTERSTITIAL_ID', HMS_TEST_INTERSTITIAL_ID)
+def HMS_BANNER_ID = adId('HMS_BANNER_ID', 'r1xyep2j68')
+def HMS_INTERSTITIAL_ID = adId('HMS_INTERSTITIAL_ID', 's3oocyp6cp')
 
 android {
     namespace 'bumbumapps.a2048game'
