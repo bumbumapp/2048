@@ -9,7 +9,7 @@ import android.view.KeyEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdView;
+import android.view.View;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String UNDO_GAME_STATE = "undo game state";
     private static final String MAX_TILE = "max tile";
     private static final String TIMER = "timer";
-    private AdView adView;
+    private View adView;
 
 
     private MainView view;

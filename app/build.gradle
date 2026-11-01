@@ -2,6 +2,17 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
+// Huawei Ads (Petal) slot IDs for the AppGallery build: -PHMS_BANNER_ID=... or ads.properties.
+// Until the real slots are set the hms build falls back to Huawei's public test slots.
+def adsProps = new Properties()
+def adsPropsFile = rootProject.file('ads.properties')
+if (adsPropsFile.exists()) adsPropsFile.withInputStream { adsProps.load(it) }
+def adId = { String key, String fallback -> ((project.findProperty(key) ?: adsProps.getProperty(key)) ?: fallback).toString() }
+def HMS_TEST_BANNER_ID = 'testw6vs28auh3'
+def HMS_TEST_INTERSTITIAL_ID = 'testb4znbuh3n2'
+def HMS_BANNER_ID = adId('HMS_BANNER_ID', HMS_TEST_BANNER_ID)
+def HMS_INTERSTITIAL_ID = adId('HMS_INTERSTITIAL_ID', HMS_TEST_INTERSTITIAL_ID)
+
 android {
     namespace 'bumbumapps.a2048game'
     compileSdk 36
@@ -20,6 +31,21 @@ android {
     }
     buildFeatures {
         buildConfig true
+        resValues true
+    }
+    // play = Google Play (AdMob + UMP), hms = Huawei AppGallery (Huawei Ads, no Google Mobile Services).
+    flavorDimensions = ['store']
+    productFlavors {
+        play {
+            dimension 'store'
+        }
+        hms {
+            dimension 'store'
+            resValue 'string', 'hms_banner_id', HMS_BANNER_ID
+            resValue 'string', 'hms_interstitial_id', HMS_INTERSTITIAL_ID
+            resValue 'string', 'hms_test_banner_id', HMS_TEST_BANNER_ID
+            resValue 'string', 'hms_test_interstitial_id', HMS_TEST_INTERSTITIAL_ID
+        }
     }
     buildTypes {
         debug {
@@ -48,11 +74,13 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.8.0'
     implementation 'androidx.core:core:1.17.0'
     implementation 'androidx.preference:preference:1.2.1'
-    implementation 'com.google.android.gms:play-services-ads:25.5.0'
-    implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+    playImplementation 'com.google.android.gms:play-services-ads:25.5.0'
+    playImplementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+    hmsImplementation 'com.huawei.hms:ads-lite:13.4.91.301'
     implementation platform('com.google.firebase:firebase-bom:35.1.0')
     implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-analytics'
+    // Not called from code; it pulls Google ad-ID classes and needs GMS, so only the Play build ships it.
+    playImplementation 'com.google.firebase:firebase-analytics'
 
     testImplementation 'junit:junit:4.13.2'
 }
