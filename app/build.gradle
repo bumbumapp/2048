@@ -21,8 +21,8 @@ android {
         applicationId "com.bumbumapps.a2048game"
         minSdk 24
         targetSdk 36
-        versionCode 20
-        versionName "10.6.0"
+        versionCode 21
+        versionName "10.6.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {

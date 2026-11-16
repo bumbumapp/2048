@@ -120,11 +120,17 @@ public class BoardView extends View {
         super.onDetachedFromWindow();
     }
 
+    private int reserveHeight;
+
+    public void setReserveHeight(int px) {
+        reserveHeight = px;
+    }
+
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         int w = MeasureSpec.getSize(widthSpec);
         int h = MeasureSpec.getSize(heightSpec);
-        int side = MeasureSpec.getMode(heightSpec) == MeasureSpec.UNSPECIFIED ? w : Math.min(w, h);
+        int side = MeasureSpec.getMode(heightSpec) == MeasureSpec.UNSPECIFIED ? w : Math.min(w, Math.max(0, h - reserveHeight));
         setMeasuredDimension(side, side);
     }
 

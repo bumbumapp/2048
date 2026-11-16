@@ -175,25 +175,28 @@ public class GameActivity extends BaseActivity {
         hud.addView(statTile(null, thirdV, thirdLabel), Ui.margins(Ui.weight(1, -2), this, 4, 0, 0, 0));
         col.addView(hud);
 
-        // Board
-        FrameLayout boardBox = new FrameLayout(this);
+        // Board + target progress: one flexible group, extra height is shared in even gaps
+        LinearLayout group = new LinearLayout(this);
+        group.setOrientation(LinearLayout.VERTICAL);
         board = new BoardView(this);
         board.setSkin(skin);
         board.setSwipeListener(this::onSwipe);
-        boardBox.addView(board, new FrameLayout.LayoutParams(-1, -1, Gravity.CENTER));
-        LinearLayout.LayoutParams bp = new LinearLayout.LayoutParams(-1, 0, 1f);
-        bp.topMargin = Ui.dp(this, 16);
-        bp.bottomMargin = Ui.dp(this, 16);
-        col.addView(boardBox, bp);
+        board.setReserveHeight(Ui.dp(this, 60));
+        group.addView(flex(), new LinearLayout.LayoutParams(1, 0, 1f));
+        LinearLayout.LayoutParams bp = new LinearLayout.LayoutParams(-1, -2);
+        bp.gravity = Gravity.CENTER_HORIZONTAL;
+        bp.topMargin = Ui.dp(this, 8);
+        bp.bottomMargin = Ui.dp(this, 8);
+        group.addView(board, bp);
+        group.addView(flex(), new LinearLayout.LayoutParams(1, 0, 1f));
 
-        // Target progress
         LinearLayout tl = new LinearLayout(this);
         tl.setOrientation(LinearLayout.HORIZONTAL);
         TextView tlabel = Ui.text(this, getString(R.string.label_target), 12, skin.textSecondary, 700);
         tl.addView(tlabel, new LinearLayout.LayoutParams(0, -2, 1f));
         targetValue = Ui.text(this, "", 12, skin.text, 800);
         tl.addView(targetValue);
-        col.addView(tl);
+        group.addView(tl);
         LinearLayout track = new LinearLayout(this);
         track.setOrientation(LinearLayout.HORIZONTAL);
         track.setBackground(Ui.round(skin.surface2, 4, this));
@@ -204,8 +207,9 @@ public class GameActivity extends BaseActivity {
         track.addView(barRest, new LinearLayout.LayoutParams(0, -1, 1f));
         LinearLayout.LayoutParams trp = new LinearLayout.LayoutParams(-1, Ui.dp(this, 8));
         trp.topMargin = Ui.dp(this, 8);
-        col.addView(track, trp);
-        col.addView(spacer(16));
+        group.addView(track, trp);
+        group.addView(flex(), new LinearLayout.LayoutParams(1, 0, 1f));
+        col.addView(group, new LinearLayout.LayoutParams(-1, 0, 1f));
 
         // Actions
         LinearLayout actions = new LinearLayout(this);
@@ -222,6 +226,7 @@ public class GameActivity extends BaseActivity {
         col.addView(actions);
 
         adContainer = new FrameLayout(this);
+        adContainer.setMinimumHeight(Ui.dp(this, 50));
         LinearLayout.LayoutParams ap = new LinearLayout.LayoutParams(-1, -2);
         ap.topMargin = Ui.dp(this, 8);
         col.addView(adContainer, ap);
@@ -232,6 +237,10 @@ public class GameActivity extends BaseActivity {
         overlay.setBackgroundColor(Ui.withAlpha(skin.bg, 0xE6));
         frame.addView(overlay, new FrameLayout.LayoutParams(-1, -1));
         show(frame);
+    }
+
+    private View flex() {
+        return new View(this);
     }
 
     private View spacer(int dp) {
