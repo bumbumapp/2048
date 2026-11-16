@@ -1,28 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Bento: light ground, white board and score tiles, curated tile spectrum with white numbers. -->
-    <color name="textColorDark">#ffffff</color>
-    <color name="textColorLight">#ffffff</color>
-    <color name="textColor">#5B6275</color>
-    <color name="textDark">#0E1222</color>
-    <color name="lightUpRectangle">#F5B83D</color>
-    <color name="cellRectangle">#ECEDF3</color>
-    <color name="backgroundRectangle">#FFFFFF</color>
-    <color name="toolbar">#F3F4F8</color>
     <color name="background">#F3F4F8</color>
-    <color name="cellColor2">#5B6B8C</color>
-    <color name="cellColor4">#4E7FA8</color>
-    <color name="cellColor8">#2E9C8A</color>
-    <color name="cellColor16">#3BB273</color>
-    <color name="cellColor32">#E2A93B</color>
-    <color name="cellColor64">#E5773A</color>
-    <color name="cellColor128">#E5484D</color>
-    <color name="cellColor256">#D6336C</color>
-    <color name="cellColor512">#A855F7</color>
-    <color name="cellColor1024">#6366F1</color>
-    <color name="cellColor2048">#F5B83D</color>
-    <color name="cellColor4096">#FF6B70</color>
-    <color name="fadeRectangle">#CCF3F4F8</color>
-    <color name="textValue">#0E1222</color>
-    <color name="iconColor">#0E1222</color>
+    <color name="textColor">#5B6275</color>
 </resources>
